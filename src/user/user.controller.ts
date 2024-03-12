@@ -2,9 +2,10 @@ import {
   Controller,
   Delete,
   Get,
+  Inject,
   // HttpException,
   // HttpStatus,
-  Logger,
+  LoggerService,
   // NotFoundException,
   Patch,
   Post,
@@ -14,12 +15,14 @@ import {
 // import { ConfigEnum } from 'src/enum/config.enum';
 import { UserService } from './user.service';
 import { User } from './user.entity';
+import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 
 @Controller('user')
 export class UserController {
   constructor(
     private readonly userService: UserService,
-    private readonly logger: Logger,
+    @Inject(WINSTON_MODULE_NEST_PROVIDER)
+    private readonly logger: LoggerService,
     // private configService: ConfigService,
   ) {
     this.logger.log('UserController init!');
@@ -30,7 +33,7 @@ export class UserController {
     // const data = this.configService.get(ConfigEnum.DB_DATABASE);
     // console.log('data: ', data); // testdb
 
-    const user = { isAdmin: false };
+    const user = { isAdmin: true };
     if (!user.isAdmin) {
       throw new UnauthorizedException('用户未授权');
       // throw new NotFoundException('用户不存在');
