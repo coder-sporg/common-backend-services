@@ -1,4 +1,4 @@
-import { Controller, Delete, Get, Patch, Post } from '@nestjs/common';
+import { Controller, Delete, Get, Logger, Patch, Post } from '@nestjs/common';
 // import { ConfigService } from '@nestjs/config';
 // import { ConfigEnum } from 'src/enum/config.enum';
 import { UserService } from './user.service';
@@ -8,13 +8,22 @@ import { User } from './user.entity';
 export class UserController {
   constructor(
     private readonly userService: UserService,
+    private readonly logger: Logger,
     // private configService: ConfigService,
-  ) {}
+  ) {
+    this.logger.log('UserController init!');
+  }
 
   @Get()
   getUsers() {
     // const data = this.configService.get(ConfigEnum.DB_DATABASE);
     // console.log('data: ', data); // testdb
+
+    this.logger.log('请求 getUsers 成功');
+    this.logger.warn('请求 getUsers 成功');
+    this.logger.error('请求 getUsers 成功');
+    // this.logger.debug('请求 getUsers 成功');
+    // this.logger.verbose('请求 getUsers 成功');
 
     return this.userService.findAll();
   }

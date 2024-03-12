@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Global, Logger, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import * as dotenv from 'dotenv';
 import * as Joi from 'joi';
@@ -15,6 +15,8 @@ import { Roles } from './roles/roles.entity';
 
 const envFilePath = `.env.${process.env.NODE_ENV || 'development'}`;
 
+// 通过 @Global 装饰器全局进行使用
+@Global()
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -84,6 +86,9 @@ const envFilePath = `.env.${process.env.NODE_ENV || 'development'}`;
     LogsModule,
   ],
   controllers: [],
-  providers: [],
+  // 从 nestjs/common 中引入Logger,因为在main.ts中对 Logger 进行了重写
+  providers: [Logger],
+  // 进行导出，供其他模块可以直接使用 注意 @Global()
+  exports: [Logger],
 })
 export class AppModule {}
