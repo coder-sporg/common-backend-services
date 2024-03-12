@@ -1,4 +1,15 @@
-import { Controller, Delete, Get, Logger, Patch, Post } from '@nestjs/common';
+import {
+  Controller,
+  Delete,
+  Get,
+  // HttpException,
+  // HttpStatus,
+  Logger,
+  // NotFoundException,
+  Patch,
+  Post,
+  UnauthorizedException,
+} from '@nestjs/common';
 // import { ConfigService } from '@nestjs/config';
 // import { ConfigEnum } from 'src/enum/config.enum';
 import { UserService } from './user.service';
@@ -18,6 +29,16 @@ export class UserController {
   getUsers() {
     // const data = this.configService.get(ConfigEnum.DB_DATABASE);
     // console.log('data: ', data); // testdb
+
+    const user = { isAdmin: false };
+    if (!user.isAdmin) {
+      throw new UnauthorizedException('用户未授权');
+      // throw new NotFoundException('用户不存在');
+      // throw new HttpException(
+      //   'User is not admin, Forbidden to access getAllUsers',
+      //   HttpStatus.FORBIDDEN,
+      // );
+    }
 
     this.logger.log('请求 getUsers 成功');
     this.logger.warn('请求 getUsers 成功');
