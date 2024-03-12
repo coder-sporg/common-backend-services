@@ -1,19 +1,16 @@
 import { Global, Logger, Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 import * as dotenv from 'dotenv';
 import * as Joi from 'joi';
-import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { UserModule } from './user/user.module';
 import { RolesModule } from './roles/roles.module';
 import { LogsModule } from './logs/logs.module';
-import { ConfigEnum } from './enum/config.enum';
-import { User } from './user/user.entity';
-import { Profile } from './user/profile.entity';
-import { Logs } from './logs/logs.entity';
-import { Roles } from './roles/roles.entity';
 
 const envFilePath = `.env.${process.env.NODE_ENV || 'development'}`;
+
+import { connectionParams } from 'ormconfig';
 
 // 通过 @Global 装饰器全局进行使用
 @Global()
@@ -49,24 +46,7 @@ const envFilePath = `.env.${process.env.NODE_ENV || 'development'}`;
         LOG_LEVEL: Joi.string(),
       }),
     }),
-    TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) =>
-        ({
-          type: configService.get(ConfigEnum.DB_TYPE),
-          host: configService.get(ConfigEnum.DB_HOST),
-          port: configService.get(ConfigEnum.DB_PORT),
-          username: configService.get(ConfigEnum.DB_USERNAME),
-          password: configService.get(ConfigEnum.DB_PASSWORD),
-          database: configService.get(ConfigEnum.DB_DATABASE),
-          entities: [User, Profile, Logs, Roles],
-          // 同步本地的schema与数据库 => 初始化的时候使用
-          synchronize: configService.get(ConfigEnum.DB_SYNC),
-          // 设置日志级别为error，设为 true，会将 查询语句 在终端打印出来
-          logging: ['error'],
-        }) as TypeOrmModuleOptions, // 断言类型为TypeOrmModuleOptions
-    }),
+    TypeOrmModule.forRoot(connectionParams),
     // 固定写法，不能根据配置获取
     // TypeOrmModule.forRoot({
     //   type: 'mysql',
