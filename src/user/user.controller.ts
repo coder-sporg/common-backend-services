@@ -89,9 +89,11 @@ export class UserController {
     return this.userService.update(id, updateUser);
   }
 
+  // 1.controller名 vs service名 vs repository名应该怎么取
+  // 2.typeorm里面delete 与 remove的区别
   @Delete('/:id')
   removeUser(@Param('id') id: number): any {
-    return this.userService.delete(id);
+    return this.userService.remove(id);
   }
 
   @Get('/profile')

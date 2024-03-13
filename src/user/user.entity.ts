@@ -1,4 +1,6 @@
 import {
+  AfterInsert,
+  AfterRemove,
   Column,
   Entity,
   JoinTable,
@@ -33,4 +35,14 @@ export class User {
   @ManyToMany(() => Roles, (Roles) => Roles.users)
   @JoinTable({ name: 'user_roles' })
   roles: Roles[];
+
+  @AfterInsert()
+  afterInsert() {
+    console.log('afterInsert', this.id, this.username);
+  }
+
+  @AfterRemove()
+  afterRemove() {
+    console.log('Removed from the database');
+  }
 }

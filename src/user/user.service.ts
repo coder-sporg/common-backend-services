@@ -103,6 +103,10 @@ export class UserService {
     return this.userRepository.findOne({ where: { username } });
   }
 
+  findOne(id: number) {
+    return this.userRepository.findOne({ where: { id } });
+  }
+
   async create(user: User) {
     const newUser = await this.userRepository.create(user);
     return this.userRepository.save(newUser);
@@ -123,8 +127,10 @@ export class UserService {
     return this.userRepository.update(id, user);
   }
 
-  delete(id: number) {
-    return this.userRepository.delete(id);
+  async remove(id: number) {
+    // return this.userRepository.delete(id);
+    const user = await this.findOne(id);
+    return this.userRepository.remove(user);
   }
 
   findProfile(id: number) {
