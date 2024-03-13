@@ -50,6 +50,7 @@ export class UserService {
     // });
 
     const obj = {
+      'user.username': username,
       'profile.gender': gender,
       'roles.id': role,
     };
@@ -69,10 +70,11 @@ export class UserService {
     // } else {
     //   queryBuilder.where('user.username IS NOT NULL');
     // }
+
     // WHERE 1=1 AND ...
-    queryBuilder.where(username ? 'user.username = :username' : '1=1', {
-      username,
-    });
+    // queryBuilder.where(username ? 'user.username = :username' : '1=1', {
+    //   username,
+    // });
 
     // if (gender) {
     //   queryBuilder.andWhere('profile.gender = :gender', { gender });
