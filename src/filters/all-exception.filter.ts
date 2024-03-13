@@ -9,6 +9,7 @@ import {
 import { HttpAdapterHost } from '@nestjs/core';
 
 import * as requestIp from 'request-ip';
+// import { QueryFailedError } from 'typeorm';
 
 // 没有参数，就是所有的异常
 @Catch()
@@ -30,6 +31,17 @@ export class AllExceptionFilter implements ExceptionFilter {
         ? exception.getStatus()
         : HttpStatus.INTERNAL_SERVER_ERROR;
 
+    const msg: unknown = exception['response'] || 'Internal Server Error';
+
+    // 加入更多异常错误逻辑
+    // QueryFailedError（查询错误） instanceOf TypeORMError
+    // if (exception instanceof QueryFailedError) {
+    //   msg = exception.message;
+    //   if (exception.driverError.errno === 1062) {
+    //     msg = '唯一索引冲突';
+    //   }
+    // }
+
     const responseBody = {
       headers: request.headers,
       query: request.query,
@@ -39,7 +51,7 @@ export class AllExceptionFilter implements ExceptionFilter {
       // 请求 ip
       ip: requestIp.getClientIp(request),
       exception: exception['name'],
-      error: exception['response'] || 'Internal Server Error',
+      error: msg,
     };
 
     this.logger.error('[all-filter-test]', responseBody);

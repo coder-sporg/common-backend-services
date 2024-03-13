@@ -16,7 +16,8 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  // 保证唯一
+  @Column({ unique: true })
   username: string;
 
   @Column()

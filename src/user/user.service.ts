@@ -106,6 +106,17 @@ export class UserService {
   async create(user: User) {
     const newUser = await this.userRepository.create(user);
     return this.userRepository.save(newUser);
+
+    // 捕获异常，返回给前端
+    // try {
+    //   const res = await this.userRepository.save(newUser);
+    //   return res;
+    // } catch (error) {
+    //   if (error.errno === 1062) {
+    //     // 抛出异常
+    //     throw new HttpException(error.sqlMessage, 500);
+    //   }
+    // }
   }
 
   async update(id: number, user: Partial<User>) {

@@ -14,6 +14,7 @@ import {
   Query,
   Req,
   UnauthorizedException,
+  UseFilters,
 } from '@nestjs/common';
 // import { ConfigService } from '@nestjs/config';
 // import { ConfigEnum } from 'src/enum/config.enum';
@@ -21,8 +22,10 @@ import { UserService } from './user.service';
 import { User } from './user.entity';
 import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 import { getUserDto } from './dto/get-user.dto';
+import { TypeormFilter } from '../filters/typeorm.filter';
 
 @Controller('user')
+@UseFilters(new TypeormFilter())
 export class UserController {
   constructor(
     private readonly userService: UserService,
