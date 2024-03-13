@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Delete,
   Get,
@@ -6,9 +7,12 @@ import {
   // HttpException,
   // HttpStatus,
   LoggerService,
+  Param,
   // NotFoundException,
   Patch,
   Post,
+  Query,
+  Req,
   UnauthorizedException,
 } from '@nestjs/common';
 // import { ConfigService } from '@nestjs/config';
@@ -26,6 +30,11 @@ export class UserController {
     // private configService: ConfigService,
   ) {
     this.logger.log('UserController init!');
+  }
+
+  @Get('/info/:id')
+  getUser() {
+    return 'getUser';
   }
 
   @Get()
@@ -58,30 +67,33 @@ export class UserController {
   }
 
   @Post()
-  addUser(): any {
-    const user = {
-      username: 'test1',
-      password: '123456',
-    } as User;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  addUser(@Body() dto: any, @Req() req: any): any {
+    // 拿到所有 请求的信息
+    // console.log('🚀 ~ UserController ~ addUser ~ req:', req);
+    const user = dto as User;
     return this.userService.create(user);
   }
 
-  @Patch()
-  updateUser(): any {
-    const updateUser = { username: '张三' } as User;
-    return this.userService.update(2, updateUser);
+  @Patch('/:id')
+  // param 可能有多个，需要保持 命名与 传入的一致，即 patch中与param一致
+  updateUser(@Body() dto: any, @Param('id') id: number): any {
+    const updateUser = dto as User;
+    return this.userService.update(id, updateUser);
   }
 
-  @Delete()
-  removeUser(): any {
-    return this.userService.delete(2);
+  @Delete('/:id')
+  removeUser(@Param('id') id: number): any {
+    return this.userService.delete(id);
   }
 
   @Get('/profile')
-  getUserProfile(): any {
-    return this.userService.findProfile(1);
+  // 将 id 解析出来
+  getUserProfile(@Query('id') query: any): any {
+    return this.userService.findProfile(query);
   }
 
+  // todo 放入 logs 中
   @Get('/logs')
   getUserLogs(): any {
     return this.userService.findUserLogs(2);
