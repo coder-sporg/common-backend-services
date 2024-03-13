@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  // Headers,
   Inject,
   // HttpException,
   // HttpStatus,
@@ -84,15 +85,32 @@ export class UserController {
   @Patch('/:id')
   // param 可能有多个，需要保持 命名与 传入的一致，即 patch中与param一致
   // DTO 数据传输格式
-  updateUser(@Body() dto: any, @Param('id') id: number): any {
+  updateUser(
+    @Body() dto: any,
+    @Param('id') id: number,
+    // @Headers('Authorization') headers: any,
+  ): any {
     const updateUser = dto as User;
     return this.userService.update(id, updateUser);
+
+    // if (id === headers) {
+    //   // 说明是同一个用户在修改
+    //   // todo
+    //   // 权限1：判断用户是否是自己
+    //   // 权限2：判断用户是否有更新user的权限
+    //   // 返回数据：不能包含敏感的password等信息
+    //   const updateUser = dto as User;
+    //   return this.userService.update(id, updateUser);
+    // } else {
+    //   throw new UnauthorizedException();
+    // }
   }
 
   // 1.controller名 vs service名 vs repository名应该怎么取
   // 2.typeorm里面delete 与 remove的区别
   @Delete('/:id')
   removeUser(@Param('id') id: number): any {
+    // 权限：判断用户是否有删除user的权限
     return this.userService.remove(id);
   }
 

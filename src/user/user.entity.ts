@@ -25,7 +25,8 @@ export class User {
   @Column()
   password: string;
 
-  @OneToOne(() => Profile, (profile) => profile.user)
+  // 将 cascade: true 设置为启用完全级联操作，相关对象将被插入和更新到数据库中
+  @OneToOne(() => Profile, (profile) => profile.user, { cascade: true })
   profile: Profile;
 
   // @OneToMany 不能单独存在，必须与 @ManyToOne 搭配使用
