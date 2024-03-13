@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { User } from './user.entity';
 import { Logs } from '../logs/logs.entity';
 import { getUserDto } from './dto/get-user.dto';
+import { conditionUtils } from '../utils/db_helper';
 
 @Injectable()
 export class UserService {
@@ -18,35 +19,82 @@ export class UserService {
     // LIMIT 10 OFFSET 10
     const { page, limit, username, gender, role } = query;
     const take = limit || 3;
-    const skip = (page || 1 - 1) * take;
+    const skip = ((page || 1) - 1) * take;
     // 查询 user 表，关联 profile 和 roles
-    return this.userRepository.find({
-      // 过滤数据，只需要 id 和 username，不返回 password
-      select: {
-        id: true,
-        username: true,
-        profile: {
-          gender: true,
-        },
-      },
-      relations: {
-        profile: true,
-        roles: true,
-      },
-      where: {
-        username,
-        profile: {
-          gender,
-        },
-        roles: {
-          id: role,
-        },
-      },
-      // 每页条数
-      take,
-      // 偏移量
-      skip,
+    // return this.userRepository.find({
+    //   // 过滤数据，只需要 id 和 username，不返回 password
+    //   select: {
+    //     id: true,
+    //     username: true,
+    //     profile: {
+    //       gender: true,
+    //     },
+    //   },
+    //   relations: {
+    //     profile: true,
+    //     roles: true,
+    //   },
+    //   where: { // AND
+    //     username,
+    //     profile: {
+    //       gender,
+    //     },
+    //     roles: {
+    //       id: role,
+    //     },
+    //   },
+    //   // 每页条数
+    //   take,
+    //   // 偏移量
+    //   skip,
+    // });
+
+    const obj = {
+      'profile.gender': gender,
+      'roles.id': role,
+    };
+
+    // 使用 queryBuilder 来查询
+    const queryBuilder = this.userRepository
+      .createQueryBuilder('user')
+      // LEFT JOIN 和 INNER JOIN 的区别在于，如果用户profile，INNER JOIN 不会返回该用户，而 LEFT JOIN 会返回该用户。
+      // .innerJoinAndSelect('user.profile', 'profile')
+      // .innerJoinAndSelect('user.roles', 'roles')
+      .leftJoinAndSelect('user.profile', 'profile')
+      .leftJoinAndSelect('user.roles', 'roles');
+    const newQuery = conditionUtils<User>(queryBuilder, obj);
+    // 后面的条件查询需要判断是否有值
+    // if (username) {
+    //   queryBuilder.where('user.username = :username', { username });
+    // } else {
+    //   queryBuilder.where('user.username IS NOT NULL');
+    // }
+    // WHERE 1=1 AND ...
+    queryBuilder.where(username ? 'user.username = :username' : '1=1', {
+      username,
     });
+
+    // if (gender) {
+    //   queryBuilder.andWhere('profile.gender = :gender', { gender });
+    // } else {
+    //   queryBuilder.andWhere('profile.gender IS NOT NULL');
+    // }
+    // if (role) {
+    //   queryBuilder.andWhere('roles.id = :role', { role });
+    // } else {
+    //   queryBuilder.andWhere('roles.id IS NOT NULL');
+    // }
+    return (
+      newQuery
+        // .where('user.username = :username', { username })
+        // .andWhere('profile.gender = :gender', { gender })
+        // .andWhere('roles.id = :role', { role })
+        .take(take)
+        .skip(skip)
+        // getMany 和 getRawMany 的区别：getMany 会按照对象子对象返回数据，而 getRawMany 返回的是扁平化的数据（如 roles 中多条数据，也会返回多条数据）
+        // .getRawMany()
+        .getMany()
+    );
   }
 
   find(username: string) {
