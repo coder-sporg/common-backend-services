@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Query } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
 import { Logs } from '../logs/logs.entity';
+import { getUserDto } from './dto/get-user.dto';
 
 @Injectable()
 export class UserService {
@@ -11,8 +12,41 @@ export class UserService {
     @InjectRepository(Logs) private readonly logsRepository: Repository<Logs>,
   ) {}
 
-  findAll() {
-    return this.userRepository.find();
+  findAll(@Query() query: getUserDto) {
+    // SELECT * FROM user u, profile p, roles r WHERE u.id = p.uid AND u.id = r.uid AND ...
+    // SELECT * FROM user u LEFT JOIN profile p ON u.id = p.uid LEFT JOIN roles r ON u.id = r.uid WHERE ...
+    // LIMIT 10 OFFSET 10
+    const { page, limit, username, gender, role } = query;
+    const take = limit || 3;
+    const skip = (page || 1 - 1) * take;
+    // 查询 user 表，关联 profile 和 roles
+    return this.userRepository.find({
+      // 过滤数据，只需要 id 和 username，不返回 password
+      select: {
+        id: true,
+        username: true,
+        profile: {
+          gender: true,
+        },
+      },
+      relations: {
+        profile: true,
+        roles: true,
+      },
+      where: {
+        username,
+        profile: {
+          gender,
+        },
+        roles: {
+          id: role,
+        },
+      },
+      // 每页条数
+      take,
+      // 偏移量
+      skip,
+    });
   }
 
   find(username: string) {

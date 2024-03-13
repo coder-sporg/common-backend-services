@@ -20,6 +20,7 @@ import {
 import { UserService } from './user.service';
 import { User } from './user.entity';
 import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
+import { getUserDto } from './dto/get-user.dto';
 
 @Controller('user')
 export class UserController {
@@ -38,7 +39,8 @@ export class UserController {
   }
 
   @Get()
-  getUsers() {
+  // 前端传递的所有参数都是 string
+  getUsers(@Query() query: getUserDto) {
     // const data = this.configService.get(ConfigEnum.DB_DATABASE);
     // console.log('data: ', data); // testdb
 
@@ -52,13 +54,14 @@ export class UserController {
       // );
     }
 
-    this.logger.log('请求 getUsers 成功');
-    this.logger.warn('请求 getUsers 成功');
-    this.logger.error('请求 getUsers 成功');
+    // this.logger.log('请求 getUsers 成功');
+    // this.logger.warn('请求 getUsers 成功');
+    // this.logger.error('请求 getUsers 成功');
     // this.logger.debug('请求 getUsers 成功');
     // this.logger.verbose('请求 getUsers 成功');
 
-    return this.userService.findAll();
+    // page 页码 limit 每页条数 condition 查询条件（username, role, gender） 排序 sort
+    return this.userService.findAll(query);
   }
 
   @Get('name')
@@ -77,6 +80,7 @@ export class UserController {
 
   @Patch('/:id')
   // param 可能有多个，需要保持 命名与 传入的一致，即 patch中与param一致
+  // DTO 数据传输格式
   updateUser(@Body() dto: any, @Param('id') id: number): any {
     const updateUser = dto as User;
     return this.userService.update(id, updateUser);
