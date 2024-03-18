@@ -9,6 +9,7 @@ import {
   // HttpStatus,
   LoggerService,
   Param,
+  ParseIntPipe,
   // NotFoundException,
   Patch,
   Post,
@@ -24,6 +25,8 @@ import { User } from './user.entity';
 import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 import { getUserDto } from './dto/get-user.dto';
 import { TypeormFilter } from '../filters/typeorm.filter';
+import { CreateUserPipe } from './pipes/create-user.pipe';
+import { CreateUserDto } from './dto/create-user.dto';
 
 @Controller('user')
 @UseFilters(new TypeormFilter())
@@ -75,7 +78,7 @@ export class UserController {
 
   @Post()
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  addUser(@Body() dto: any, @Req() req: any): any {
+  addUser(@Body(CreateUserPipe) dto: CreateUserDto, @Req() req: any): any {
     // 拿到所有 请求的信息
     // console.log('🚀 ~ UserController ~ addUser ~ req:', req);
     const user = dto as User;
@@ -116,8 +119,9 @@ export class UserController {
 
   @Get('/profile')
   // 将 id 解析出来
-  getUserProfile(@Query('id') query: any): any {
-    return this.userService.findProfile(query);
+  getUserProfile(@Query('id', ParseIntPipe) id: any): any {
+    // console.log('id: ', id, typeof id); // number
+    return this.userService.findProfile(id);
   }
 
   // todo 放入 logs 中
