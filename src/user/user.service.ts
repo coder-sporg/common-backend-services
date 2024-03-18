@@ -113,7 +113,7 @@ export class UserService {
     return this.userRepository.findOne({ where: { id } });
   }
 
-  async create(user: User) {
+  async create(user: Partial<User>) {
     // 如果用户没有设置角色，默认为访客
     if (!user.roles) {
       const role = await this.rolesRepository.findOne({ where: { id: 4 } });

@@ -7,6 +7,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
 import { RolesModule } from './roles/roles.module';
 import { LogsModule } from './logs/logs.module';
+import { AuthModule } from './auth/auth.module';
 
 const envFilePath = `.env.${process.env.NODE_ENV || 'development'}`;
 
@@ -64,6 +65,7 @@ import { connectionParams } from 'ormconfig';
     UserModule,
     RolesModule,
     LogsModule,
+    AuthModule,
   ],
   controllers: [],
   // 从 nestjs/common 中引入Logger,因为在main.ts中对 Logger 进行了重写
