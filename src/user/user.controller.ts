@@ -38,8 +38,8 @@ export class UserController {
   }
 
   @Get('/info/:id')
-  getUser() {
-    return 'getUser';
+  getUser(@Param('id') id: number) {
+    return this.userService.findOne(id);
   }
 
   @Get()
@@ -69,8 +69,8 @@ export class UserController {
   }
 
   @Get('name')
-  getUserByName() {
-    return this.userService.find('admin');
+  getUserByName(@Query('name') name: string) {
+    return this.userService.find(name);
   }
 
   @Post()

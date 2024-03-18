@@ -30,10 +30,10 @@ export class User {
   profile: Profile;
 
   // @OneToMany 不能单独存在，必须与 @ManyToOne 搭配使用
-  @OneToMany(() => Logs, (Logs) => Logs.user) // 第二个参数指定 反向关系
+  @OneToMany(() => Logs, (Logs) => Logs.user, { cascade: true }) // 第二个参数指定 反向关系 日志跟随人员的增删而增删
   logs: Logs[];
 
-  @ManyToMany(() => Roles, (Roles) => Roles.users)
+  @ManyToMany(() => Roles, (Roles) => Roles.users, { cascade: ['insert'] }) // 角色 仅跟随 用户插入而插入
   @JoinTable({ name: 'user_roles' })
   roles: Roles[];
 

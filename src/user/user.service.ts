@@ -1,16 +1,19 @@
 import { Injectable, Query } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { User } from './user.entity';
 import { Logs } from '../logs/logs.entity';
 import { getUserDto } from './dto/get-user.dto';
 import { conditionUtils } from '../utils/db_helper';
+import { Roles } from '../roles/roles.entity';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
     @InjectRepository(Logs) private readonly logsRepository: Repository<Logs>,
+    @InjectRepository(Roles)
+    private readonly rolesRepository: Repository<Roles>,
   ) {}
 
   findAll(@Query() query: getUserDto) {
@@ -18,7 +21,7 @@ export class UserService {
     // SELECT * FROM user u LEFT JOIN profile p ON u.id = p.uid LEFT JOIN roles r ON u.id = r.uid WHERE ...
     // LIMIT 10 OFFSET 10
     const { page, limit, username, gender, role } = query;
-    const take = limit || 3;
+    const take = limit || 10;
     const skip = ((page || 1) - 1) * take;
     // 查询 user 表，关联 profile 和 roles
     // return this.userRepository.find({
@@ -100,7 +103,10 @@ export class UserService {
   }
 
   find(username: string) {
-    return this.userRepository.findOne({ where: { username } });
+    return this.userRepository.findOne({
+      where: { username },
+      relations: ['profile', 'roles'],
+    });
   }
 
   findOne(id: number) {
@@ -108,6 +114,20 @@ export class UserService {
   }
 
   async create(user: User) {
+    // 如果用户没有设置角色，默认为访客
+    if (!user.roles) {
+      const role = await this.rolesRepository.findOne({ where: { id: 4 } });
+      user.roles = [role];
+    }
+    if (Array.isArray(user.roles) && typeof user.roles[0] === 'number') {
+      // {id, name} -> { id } -> [id]
+      // 查询所有用户的角色信息
+      user.roles = await this.rolesRepository.find({
+        where: {
+          id: In(user.roles), // id => {id, name}
+        },
+      });
+    }
     const newUser = await this.userRepository.create(user);
     return this.userRepository.save(newUser);
 
@@ -126,6 +146,14 @@ export class UserService {
   async update(id: number, user: Partial<User>) {
     // 查询用户详情
     const userTmp = await this.findProfile(id);
+    // 查询所有的用户角色
+    const roles = await this.rolesRepository.find({
+      where: { id: In(user.roles) },
+    });
+    // 清空之前的角色
+    userTmp.roles = [];
+    // 更新用户的角色
+    user.roles = roles;
     const newUser = this.userRepository.merge(userTmp, user);
     // 联合模型更新，需要使用save方法或者queryBuilder
     return this.userRepository.save(newUser);
@@ -142,9 +170,14 @@ export class UserService {
 
   findProfile(id: number) {
     return this.userRepository.findOne({
+      select: {
+        id: true,
+        username: true,
+      },
       where: { id },
       relations: {
         profile: true,
+        roles: true,
       },
     });
   }
