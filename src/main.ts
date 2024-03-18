@@ -5,6 +5,8 @@ import 'winston-daily-rotate-file';
 import { AllExceptionFilter } from './filters/all-exception.filter';
 import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 
+import { ValidationPipe } from '@nestjs/common';
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     // 关闭整个nestjs日志
@@ -24,6 +26,14 @@ async function bootstrap() {
   // 返回一个 HttpAdapterHost 实例，这个实例包含了当前应用使用的 HTTP 适配器。这个适配器可以用来直接操作底层的 HTTP 服务器，例如添加中间件、注册路由等。
   const httpAdapter = app.get(HttpAdapterHost);
   app.useGlobalFilters(new AllExceptionFilter(logger, httpAdapter));
+
+  // 全局拦截器
+  app.useGlobalPipes(
+    new ValidationPipe({
+      // 去除在类上不存在的字段, 提高接口安全性
+      // whitelist: true,
+    }),
+  );
 
   await app.listen(3000);
 }
