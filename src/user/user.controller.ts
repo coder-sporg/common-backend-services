@@ -29,6 +29,7 @@ import { TypeormFilter } from '../filters/typeorm.filter';
 import { CreateUserPipe } from './pipes/create-user.pipe';
 import { CreateUserDto } from './dto/create-user.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { AdminGuard } from '../guards/admin.guard';
 
 @Controller('user')
 @UseFilters(new TypeormFilter())
@@ -48,6 +49,11 @@ export class UserController {
   }
 
   @Get()
+  // 1. 装饰器的执行顺序，方法的装饰器如果有多个，则是从下往上执行
+  // @UseGuards(AdminGuard)
+  // @UseGuards(AuthGuard('jwt'))
+  // 2. 如果使用 UseGuards 传递多个守卫，则从前往后执行，如果前面的Guard没有通过，则后面的Guard不会执行
+  // @UseGuards(AuthGuard('jwt'), AdminGuard)
   // 前端传递的所有参数都是 string
   getUsers(@Query() query: getUserDto) {
     // const data = this.configService.get(ConfigEnum.DB_DATABASE);
@@ -88,6 +94,7 @@ export class UserController {
   }
 
   @Patch('/:id')
+  @UseGuards(AuthGuard('jwt'), AdminGuard)
   // param 可能有多个，需要保持 命名与 传入的一致，即 patch中与param一致
   // DTO 数据传输格式
   updateUser(
@@ -114,6 +121,7 @@ export class UserController {
   // 1.controller名 vs service名 vs repository名应该怎么取
   // 2.typeorm里面delete 与 remove的区别
   @Delete('/:id')
+  @UseGuards(AuthGuard('jwt'), AdminGuard)
   removeUser(@Param('id') id: number): any {
     // 权限：判断用户是否有删除user的权限
     return this.userService.remove(id);
