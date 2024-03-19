@@ -6,6 +6,7 @@ specifiers:
   '@nestjs/config': ^3.2.0
   '@nestjs/core': ^10.0.0
   '@nestjs/jwt': ^10.2.0
+  '@nestjs/passport': ^10.0.3
   '@nestjs/platform-express': ^10.0.0
   '@nestjs/schematics': ^10.0.0
   '@nestjs/testing': ^10.0.0
@@ -50,6 +51,7 @@ dependencies:
   '@nestjs/config': 3.2.0_rgxac5hejhngp5anqgvlcpwokq
   '@nestjs/core': 10.3.3_lg6v6tgdbbrusuly24duqcql4y
   '@nestjs/jwt': 10.2.0_@nestjs+common@10.3.3
+  '@nestjs/passport': 10.0.3_l2kwvt77gtqip26qrfp5jyp6jm
   '@nestjs/platform-express': 10.3.3_dh3vy25y4u4axkklolxhc7ud74
   '@nestjs/typeorm': 10.0.2_bzyj27yfumy76a4xilc636vb74
   class-transformer: 0.5.1
@@ -1003,6 +1005,16 @@ packages:
       '@nestjs/common': 10.3.3_prqteaxeztlh7hcpcoxjb3p2le
       '@types/jsonwebtoken': 9.0.5
       jsonwebtoken: 9.0.2
+    dev: false
+
+  /@nestjs/passport/10.0.3_l2kwvt77gtqip26qrfp5jyp6jm:
+    resolution: {integrity: sha512-znJ9Y4S8ZDVY+j4doWAJ8EuuVO7SkQN3yOBmzxbGaXbvcSwFDAdGJ+OMCg52NdzIO4tQoN4pYKx8W6M0ArfFRQ==}
+    peerDependencies:
+      '@nestjs/common': ^8.0.0 || ^9.0.0 || ^10.0.0
+      passport: ^0.4.0 || ^0.5.0 || ^0.6.0 || ^0.7.0
+    dependencies:
+      '@nestjs/common': 10.3.3_prqteaxeztlh7hcpcoxjb3p2le
+      passport: 0.7.0
     dev: false
 
   /@nestjs/platform-express/10.3.3_dh3vy25y4u4axkklolxhc7ud74:
