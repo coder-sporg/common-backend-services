@@ -17,6 +17,7 @@ import {
   Req,
   UnauthorizedException,
   UseFilters,
+  UseGuards,
 } from '@nestjs/common';
 // import { ConfigService } from '@nestjs/config';
 // import { ConfigEnum } from 'src/enum/config.enum';
@@ -27,6 +28,7 @@ import { getUserDto } from './dto/get-user.dto';
 import { TypeormFilter } from '../filters/typeorm.filter';
 import { CreateUserPipe } from './pipes/create-user.pipe';
 import { CreateUserDto } from './dto/create-user.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('user')
 @UseFilters(new TypeormFilter())
@@ -118,6 +120,7 @@ export class UserController {
   }
 
   @Get('/profile')
+  @UseGuards(AuthGuard('jwt')) // 鉴权，headers 是否携带token
   // 将 id 解析出来
   getUserProfile(@Query('id', ParseIntPipe) id: any): any {
     // console.log('id: ', id, typeof id); // number
