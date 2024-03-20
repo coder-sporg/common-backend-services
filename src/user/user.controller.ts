@@ -28,11 +28,14 @@ import { getUserDto } from './dto/get-user.dto';
 import { TypeormFilter } from '../filters/typeorm.filter';
 import { CreateUserPipe } from './pipes/create-user.pipe';
 import { CreateUserDto } from './dto/create-user.dto';
-import { AuthGuard } from '@nestjs/passport';
+// import { AuthGuard } from '@nestjs/passport';
 import { AdminGuard } from '../guards/admin.guard';
+import { JwtGuard } from '../guards/jwt.guard';
 
 @Controller('user')
 @UseFilters(new TypeormFilter())
+// @UseGuards(AuthGuard('jwt')) // 当前路由全部需要 登录鉴权
+@UseGuards(JwtGuard) // 登录鉴权 优化
 export class UserController {
   constructor(
     private readonly userService: UserService,
@@ -94,7 +97,7 @@ export class UserController {
   }
 
   @Patch('/:id')
-  @UseGuards(AuthGuard('jwt'), AdminGuard)
+  @UseGuards(AdminGuard)
   // param 可能有多个，需要保持 命名与 传入的一致，即 patch中与param一致
   // DTO 数据传输格式
   updateUser(
@@ -121,14 +124,14 @@ export class UserController {
   // 1.controller名 vs service名 vs repository名应该怎么取
   // 2.typeorm里面delete 与 remove的区别
   @Delete('/:id')
-  @UseGuards(AuthGuard('jwt'), AdminGuard)
+  @UseGuards(AdminGuard)
   removeUser(@Param('id') id: number): any {
     // 权限：判断用户是否有删除user的权限
     return this.userService.remove(id);
   }
 
   @Get('/profile')
-  @UseGuards(AuthGuard('jwt')) // 鉴权，headers 是否携带token
+  // @UseGuards(AuthGuard('jwt')) // 鉴权，headers 是否携带token
   // 将 id 解析出来
   getUserProfile(@Query('id', ParseIntPipe) id: any): any {
     // console.log('id: ', id, typeof id); // number

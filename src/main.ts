@@ -35,6 +35,9 @@ async function bootstrap() {
     }),
   );
 
+  // app.useGlobalGuards()
+  // 弊端 -> 无法使用DI -> 无法访问userService
+
   await app.listen(3000);
 }
 bootstrap();

@@ -69,7 +69,13 @@ import { connectionParams } from 'ormconfig';
   ],
   controllers: [],
   // 从 nestjs/common 中引入Logger,因为在main.ts中对 Logger 进行了重写
-  providers: [Logger],
+  providers: [
+    Logger,
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: AdminGuard,
+    // },
+  ],
   // 进行导出，供其他模块可以直接使用 注意 @Global()
   exports: [Logger],
 })

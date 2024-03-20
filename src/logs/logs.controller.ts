@@ -1,4 +1,11 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Get, UseGuards } from '@nestjs/common';
+import { JwtGuard } from '../guards/jwt.guard';
 
 @Controller('logs')
-export class LogsController {}
+@UseGuards(JwtGuard)
+export class LogsController {
+  @Get()
+  getTest() {
+    return 'logs test!!!!';
+  }
+}

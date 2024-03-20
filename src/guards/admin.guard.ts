@@ -5,7 +5,7 @@ import { User } from '../user/user.entity';
 
 @Injectable()
 export class AdminGuard implements CanActivate {
-  // 常见的错误：在使用AdminGuard未导入UserModule
+  // 常见的错误：在使用AdminGuard未导入UserModule => 解决办法，1. 将 userModule 设为 @Global；2. 在使用的模块中 imports 导入
   constructor(private userService: UserService) {}
   async canActivate(context: ExecutionContext): Promise<boolean> {
     // 1. 获取请求对象
