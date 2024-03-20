@@ -12,6 +12,7 @@ import {
 import { Logs } from '../logs/logs.entity';
 import { Roles } from '../roles/roles.entity';
 import { Profile } from './profile.entity';
+import { Exclude } from 'class-transformer';
 
 @Entity()
 export class User {
@@ -23,6 +24,7 @@ export class User {
   username: string;
 
   @Column()
+  @Exclude()
   password: string;
 
   // 将 cascade: true 设置为启用完全级联操作，相关对象将被插入和更新到数据库中

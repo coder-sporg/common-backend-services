@@ -1,21 +1,26 @@
 import {
   Body,
+  ClassSerializerInterceptor,
   Controller,
   // HttpException,
   Post,
   UseFilters,
+  UseInterceptors,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { TypeormFilter } from '../filters/typeorm.filter';
 import { SigninUserDto } from './dto/signin-user.dto';
+// import { SerializeInterceptor } from '../interceptors/serialize.interceptor';
 
 // export function TypeOrmDecorator() {
 //   return UseFilters(new TypeormFilter());
 // }
 
-@UseFilters(new TypeormFilter())
-// TypeOrmDecorator() // 自己创建的登录注解
 @Controller('auth')
+// TypeOrmDecorator() // 自己创建的登录注解
+// @UseInterceptors(SerializeInterceptor) // 为controller 使用拦截器
+@UseInterceptors(ClassSerializerInterceptor) // 过滤掉密码的显示 需要在 user.entity.ts 中写 @Exclude
+@UseFilters(new TypeormFilter())
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
@@ -29,6 +34,7 @@ export class AuthController {
   }
 
   @Post('/signup')
+  // @UseInterceptors(SerializeInterceptor)
   signup(@Body() dto: SigninUserDto) {
     const { username, password } = dto;
     // if (!username || !password) {

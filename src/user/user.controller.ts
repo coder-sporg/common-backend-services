@@ -1,5 +1,6 @@
 import {
   Body,
+  ClassSerializerInterceptor,
   Controller,
   Delete,
   Get,
@@ -18,6 +19,7 @@ import {
   UnauthorizedException,
   UseFilters,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 // import { ConfigService } from '@nestjs/config';
 // import { ConfigEnum } from 'src/enum/config.enum';
@@ -33,6 +35,7 @@ import { AdminGuard } from '../guards/admin.guard';
 import { JwtGuard } from '../guards/jwt.guard';
 
 @Controller('user')
+@UseInterceptors(ClassSerializerInterceptor) // 排除属性
 @UseFilters(new TypeormFilter())
 // @UseGuards(AuthGuard('jwt')) // 当前路由全部需要 登录鉴权
 @UseGuards(JwtGuard) // 登录鉴权 优化

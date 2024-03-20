@@ -49,6 +49,9 @@ export class AuthService {
       throw new ForbiddenException('用户名已存在');
     }
     const res = this.userService.create({ username, password });
+
+    // delete res.password;
+
     return res;
   }
 }

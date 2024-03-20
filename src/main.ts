@@ -6,6 +6,7 @@ import { AllExceptionFilter } from './filters/all-exception.filter';
 import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 
 import { ValidationPipe } from '@nestjs/common';
+// import { SerializeInterceptor } from './interceptors/serialize.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -31,12 +32,14 @@ async function bootstrap() {
   app.useGlobalPipes(
     new ValidationPipe({
       // 去除在类上不存在的字段, 提高接口安全性
-      // whitelist: true,
+      whitelist: true,
     }),
   );
 
   // app.useGlobalGuards()
   // 弊端 -> 无法使用DI -> 无法访问userService
+
+  // app.useGlobalInterceptors(new SerializeInterceptor()); // 拦截器
 
   await app.listen(3000);
 }
