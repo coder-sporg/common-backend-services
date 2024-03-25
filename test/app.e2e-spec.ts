@@ -4,8 +4,17 @@
 // import { AppModule } from './../src/app.module';
 // import { setupApp } from './../src/setup';
 
+// import * as pactum from 'pactum';
+import * as Spec from 'pactum/src/models/Spec';
+
 describe('AppController (e2e)', () => {
   // let app: INestApplication;
+
+  let spec;
+  beforeEach(() => {
+    // pactum.request.setBaseUrl('http://localhost:3000');
+    spec = global.pactum as Spec;
+  });
 
   it('/ (GET)', () => {
     // return request(app.getHttpServer())
@@ -19,5 +28,16 @@ describe('AppController (e2e)', () => {
     //     .expect(200)
     //     .expect('Hello World!')
     // );
+
+    // return pactum
+    //   .spec()
+    //   .get('/api/v1/auth')
+    //   .expectStatus(200)
+    //   .expectBodyContains('Hello World!');
+
+    return spec
+      .get('/api/v1/auth')
+      .expectStatus(200)
+      .expectBodyContains('Hello World!');
   });
 });
