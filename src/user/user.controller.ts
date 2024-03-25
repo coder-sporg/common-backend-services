@@ -16,7 +16,7 @@ import {
   Post,
   Query,
   Req,
-  UnauthorizedException,
+  // UnauthorizedException,
   UseFilters,
   UseGuards,
   UseInterceptors,
@@ -46,7 +46,7 @@ export class UserController {
     private readonly logger: LoggerService,
     // private configService: ConfigService,
   ) {
-    this.logger.log('UserController init!');
+    // this.logger.log('UserController init!');
   }
 
   @Get('/info/:id')
@@ -65,15 +65,15 @@ export class UserController {
     // const data = this.configService.get(ConfigEnum.DB_DATABASE);
     // console.log('data: ', data); // testdb
 
-    const user = { isAdmin: true };
-    if (!user.isAdmin) {
-      throw new UnauthorizedException('用户未授权');
-      // throw new NotFoundException('用户不存在');
-      // throw new HttpException(
-      //   'User is not admin, Forbidden to access getAllUsers',
-      //   HttpStatus.FORBIDDEN,
-      // );
-    }
+    // const user = { isAdmin: true };
+    // if (!user.isAdmin) {
+    //   throw new UnauthorizedException('用户未授权');
+    //   throw new NotFoundException('用户不存在');
+    //   throw new HttpException(
+    //     'User is not admin, Forbidden to access getAllUsers',
+    //     HttpStatus.FORBIDDEN,
+    //   );
+    // }
 
     // this.logger.log('请求 getUsers 成功');
     // this.logger.warn('请求 getUsers 成功');

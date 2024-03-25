@@ -41,11 +41,11 @@ export class User {
 
   @AfterInsert()
   afterInsert() {
-    console.log('afterInsert', this.id, this.username);
+    // console.log('afterInsert', this.id, this.username);
   }
 
   @AfterRemove()
   afterRemove() {
-    console.log('Removed from the database');
+    // console.log('Removed from the database');
   }
 }
