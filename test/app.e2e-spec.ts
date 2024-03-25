@@ -13,7 +13,7 @@ describe('AppController (e2e)', () => {
   let spec;
   beforeEach(() => {
     // pactum.request.setBaseUrl('http://localhost:3000');
-    spec = global.pactum as Spec;
+    spec = global.spec as Spec;
   });
 
   it('/ (GET)', () => {

@@ -15,17 +15,19 @@ global.beforeEach(async () => {
   // await app.init();
 
   appFactory = await AppFactory.init();
+  await appFactory.closeDB(); // 初始化时 清空数据库
   await appFactory.initDB();
   app = appFactory.instance;
 
   // 设置全局的 pactum 请求前缀
   pactum.request.setBaseUrl(await app.getUrl());
-  global.pactum = pactum.spec();
+  global.pactum = pactum;
+  global.spec = pactum.spec();
 });
 
 global.afterEach(async () => {
-  await appFactory.cleanup();
+  // await appFactory.cleanup();
+  await appFactory?.closeDB();
   // 关闭当前进程
-  await app.close();
-  // await appFactory.closeDB();
+  await app?.close();
 });
