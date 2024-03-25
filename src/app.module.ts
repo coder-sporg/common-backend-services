@@ -12,7 +12,7 @@ import { MenusModule } from './menus/menus.module';
 
 const envFilePath = `.env.${process.env.NODE_ENV || 'development'}`;
 
-import { connectionParams } from 'ormconfig';
+import { connectionParams } from '../ormconfig';
 
 // 通过 @Global 装饰器全局进行使用
 @Global()
@@ -29,7 +29,7 @@ import { connectionParams } from 'ormconfig';
       ignoreEnvFile: false,
       validationSchema: Joi.object({
         NODE_ENV: Joi.string()
-          .valid('development', 'production')
+          .valid('development', 'production', 'test')
           .default('development'),
         // 验证.env文件中的变量是否符合要求
         // 对数据库类型做校验
@@ -38,7 +38,7 @@ import { connectionParams } from 'ormconfig';
           Joi.string().ip(),
           Joi.string().domain(),
         ),
-        DB_PORT: Joi.number().default(3306).valid(3306, 3308),
+        DB_PORT: Joi.number().default(3306).valid(3306, 3307, 3308),
         DB_DATABASE: Joi.string().required(),
         DB_USERNAME: Joi.string().required(),
         DB_PASSWORD: Joi.string().required(),

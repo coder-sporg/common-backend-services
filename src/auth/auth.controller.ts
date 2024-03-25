@@ -2,6 +2,7 @@ import {
   Body,
   ClassSerializerInterceptor,
   Controller,
+  Get,
   // HttpException,
   Post,
   UseFilters,
@@ -23,6 +24,12 @@ import { SigninUserDto } from './dto/signin-user.dto';
 @UseFilters(new TypeormFilter())
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
+
+  // 仅仅作为单元测试
+  @Get()
+  getHello(): string {
+    return 'Hello World!';
+  }
 
   @Post('/signin')
   async signin(@Body() dto: SigninUserDto) {

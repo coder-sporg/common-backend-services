@@ -12,6 +12,15 @@ function getEnv(env: string) {
   return {};
 }
 
+// 获取配置
+export function getServerConfig() {
+  const defaultConfig = getEnv('.env');
+  const envConfig = getEnv(`.env.${process.env.NODE_ENV || 'development'}`);
+  // configService
+  const config = { ...defaultConfig, ...envConfig };
+  return config;
+}
+
 // 通过dotEnv解析不同的配置
 function buildConnectionOptions() {
   const defaultConfig = getEnv('.env');
