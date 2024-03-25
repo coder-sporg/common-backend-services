@@ -6,6 +6,8 @@ import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 // import { SerializeInterceptor } from './interceptors/serialize.interceptor';
 import { getServerConfig } from '../ormconfig';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
 
 export const setupApp = (app: INestApplication) => {
   const config = getServerConfig();
@@ -37,4 +39,15 @@ export const setupApp = (app: INestApplication) => {
   // 弊端 -> 无法使用DI -> 无法访问userService
 
   // app.useGlobalInterceptors(new SerializeInterceptor()); // 拦截器
+
+  // helmet头部安全 保护应用免受一些众所周知的 Web 漏洞的影响
+  app.use(helmet());
+
+  // rateLimit限流
+  app.use(
+    rateLimit({
+      windowMs: 1 * 60 * 1000, // 1 minutes
+      max: 300, // limit each IP to 300 requests per windowMs
+    }),
+  );
 };

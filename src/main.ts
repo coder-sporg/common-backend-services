@@ -9,6 +9,7 @@ async function bootstrap() {
     // logger: false,
     // logger: ['error', 'warn'],
     // logger,
+    cors: true, // 运行跨域
   });
 
   setupApp(app);
