@@ -2,8 +2,11 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import 'winston-daily-rotate-file';
 import { setupApp } from './setup';
+import { getServerConfig } from '../ormconfig';
 
 async function bootstrap() {
+  const config = getServerConfig();
+
   const app = await NestFactory.create(AppModule, {
     // 关闭整个nestjs日志
     // logger: false,
@@ -14,7 +17,10 @@ async function bootstrap() {
 
   setupApp(app);
 
-  const port = 3000;
+  const port =
+    typeof config['APP_PORT'] === 'string'
+      ? parseInt(config['APP_PORT'])
+      : 3000;
   await app.listen(port);
 }
 bootstrap();
